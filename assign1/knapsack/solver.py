@@ -2,6 +2,17 @@
 # -*- coding: utf-8 -*-
 
 
+def dynamicprog( weights , values, volume ):
+	for index in range( len( weights ) ) :
+		if index == 0 :
+			old = [ (0,[0]) if weights[index] > vol else (values[index], [1]) for vol in range( volume + 1 )]
+                	new = old 
+		else :
+			old = new
+        		new = [ (old[vol][0], old[vol][1]+[0])  for vol in range( volume + 1 ) if vol < weights[ index ]]+[ (old[vol][0], old[vol][1]+ [0]) if (old[vol][0]) > (values[ index ] + old[vol - weights[ index ] ][0])  else (values[ index ] + old[vol - weights[ index ] ][0], old[vol - weights[ index ] ][1]+[1])  for vol in range( volume + 1 ) if vol >= weights[ index ] ]
+        return new[ -1 ][ 0 ] , new[ -1 ] [ 1 ] 
+
+
 def solveIt(inputData):
     # Modify this code to run your optimization algorithm
 
@@ -26,17 +37,8 @@ def solveIt(inputData):
 
     # a trivial greedy algorithm for filling the knapsack
     # it takes items in-order until the knapsack is full
-    value = 0
-    weight = 0
-    taken = []
-
-    for i in range(0, items):
-        if weight + weights[i] <= capacity:
-            taken.append(1)
-            value += values[i]
-            weight += weights[i]
-        else:
-            taken.append(0)
+    
+    value, taken  = dynamicprog( weights , values, capacity )
 
     # prepare the solution in the specified output format
     outputData = str(value) + ' ' + str(0) + '\n'
